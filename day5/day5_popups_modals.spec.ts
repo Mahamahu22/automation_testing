@@ -93,7 +93,7 @@ test.describe('Day 5 - Handling Popups, Alerts, and Modals', () => {
    
     const fileExists = fs.existsSync(filePath);
     expect(fileExists).toBeTruthy();
-    console.log('✅ File downloaded:', filePath);
+    console.log('File downloaded:', filePath);
   });
 
 });
