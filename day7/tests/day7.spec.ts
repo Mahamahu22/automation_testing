@@ -35,13 +35,13 @@ test('take screenshots before and after form submission (local form)', async ({ 
   await page.screenshot({ path: 'before.png' });
 
   
-  await page.fill('#fname', 'John');
-  await page.fill('#lname', 'Doe');
+  await page.fill('#fname', 'Maha');
+  await page.fill('#lname', 'Lakshmi');
  
   await page.click('button[type="submit"]');
 
  
-  await expect(page.locator('#result')).toHaveText('Form submitted for John Doe');
+  await expect(page.locator('#result')).toHaveText('Form submitted for Maha Lakshmi');
 
   
   await page.screenshot({ path: 'after.png' });
