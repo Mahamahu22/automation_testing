@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sample Form</title>
+  <style>
+    body { font-family: Arial; margin: 40px; }
+    .success { color: green; margin-top: 10px; display: none; }
+    .error { color: red; display: none; }
+  </style>
+</head>
+<body>
+  <h2>Sample Form</h2>
+
+  <label>Name:</label><br>
+  <input id="name" type="text"><span id="name-error" class="error">* Required</span><br><br>
+
+  <label>Email:</label><br>
+  <input id="email" type="text"><span id="email-error" class="error">* Required</span><br><br>
+
+  <label>Country:</label><br>
+  <select id="country">
+    <option value="">Select</option>
+    <option value="IN">India</option>
+    <option value="US">USA</option>
+  </select><br><br>
+
+  <label><input id="subscribe" type="checkbox"> Subscribe</label><br><br>
+
+  <button type="submit" onclick="submitForm()">Submit</button>
+
+  <div class="success" id="success">Thank you for submitting!</div>
+
+  <script>
+    function submitForm() {
+      const name = document.getElementById('name');
+      const email = document.getElementById('email');
+      const success = document.getElementById('success');
+      const nameErr = document.getElementById('name-error');
+      const emailErr = document.getElementById('email-error');
+
+      let valid = true;
+      if (!name.value.trim()) { nameErr.style.display='inline'; valid=false; } else nameErr.style.display='none';
+      if (!email.value.trim()) { emailErr.style.display='inline'; valid=false; } else emailErr.style.display='none';
+
+      if (valid) { success.style.display='block'; }
+    }
+  </script>
+</body>
+</html>
