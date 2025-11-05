@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Page</title>
+</head>
+<body>
+  <h2>Login Form</h2>
+  <input id="username" placeholder="Enter username">
+  <input id="password" type="password" placeholder="Enter password">
+  <button id="loginBtn" onclick="login()">Login</button>
+
+  <p id="result"></p>
+
+  <script>
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if (user === 'maha' && pass === '2210') {
+        document.getElementById('result').textContent = 'Login Successful!';
+      } else {
+        document.getElementById('result').textContent = 'Invalid Credentials';
+      }
+    }
+  </script>
+</body>
+</html>
