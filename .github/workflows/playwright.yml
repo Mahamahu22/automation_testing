@@ -1,0 +1,39 @@
+name: Day13 Playwright Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd day13-playwright
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        run: |
+          cd day13-playwright
+          npx playwright test --project=${{ matrix.browser }} --reporter=html --workers=2
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: day13-playwright/playwright-report
