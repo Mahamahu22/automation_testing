@@ -1,52 +1,56 @@
 import { test, expect } from '@playwright/test';
-import dotenv from 'dotenv';
 import fs from 'fs';
+import path from 'path';
 
-dotenv.config();
+test.setTimeout(900000);
 
-test.setTimeout(360000);
+test('Summary → Print → Download Full PDF', async ({ browser }) => {
+  const context = await browser.newContext({
+    acceptDownloads: true
+  });
 
-test('Digital Build → Summary → Print → Save PDF', async ({ page }) => {
+  const page = await context.newPage();
 
- 
-  const APP_URL = process.env.APP_URL!;
-const LOGIN_EMAIL = process.env.LOGIN_EMAIL!;
-const LOGIN_PASSWORD = process.env.LOGIN_PASSWORD!;
+  
+  await page.goto(process.env.APP_URL!);
 
-  await page.goto(APP_URL);
+  await page.getByRole('textbox', { name: 'Login Id' })
+    .fill(process.env.LOGIN_EMAIL!);
 
+  await page.getByRole('textbox', { name: 'Password' })
+    .fill(process.env.LOGIN_PASSWORD!);
 
-  await page.getByRole('textbox', { name: 'Login Id' }).fill(LOGIN_EMAIL);
-  await page.getByRole('textbox', { name: 'Password' }).fill(LOGIN_PASSWORD);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   
   await page.locator('#EPTW').click();
   await page.getByText('Summary').click();
 
-
-  await page.locator('#EPTWListFromDate').nth(1).click();
-  await page.getByRole('button', { name: 'Saturday, 1 November' }).click();
-  await page.getByRole('button', { name: 'Done' }).click();
-
-  await page.locator('#EPTWListToDate').nth(1).click();
-  await page.getByRole('button', { name: 'Sunday, 30 November' }).click();
-  await page.getByRole('button', { name: 'Done' }).click();
-
   
-  const [popup] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.getByTitle('Print').first().click()
-  ]);
+  const popupPromise = page.waitForEvent('popup');
+  await page.getByTitle('Print').first().click();
+  const popup = await popupPromise;
 
   await popup.waitForLoadState('networkidle');
+  await popup.waitForTimeout(10000);
 
-  const pdfBuffer = await popup.pdf({ format: 'A4' });
-  fs.writeFileSync('test-results/summary-report.pdf', pdfBuffer);
 
-  await page.screenshot({
-    path: 'test-results/final-summary-page.png',
-    fullPage: true
+  const pdfBytes = await popup.pdf({
+    printBackground: true,
+    preferCSSPageSize: true,
+    scale: 1,
+    format: 'A4',
+    landscape: false
   });
-});
 
+  
+  const folderPath = path.join(process.cwd(), 'test-results');
+  if (!fs.existsSync(folderPath)) fs.mkdirSync(folderPath);
+
+  const filePath = path.join(folderPath, 'pdf1.pdf');
+  fs.writeFileSync(filePath, pdfBytes);
+
+  await context.close();
+
+  console.log("📄 PDF Saved Successfully:", filePath);
+});
